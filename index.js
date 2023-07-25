@@ -19,9 +19,11 @@ async function getAllVersions() {
 async function getOneVersion() {
   const [,, version, outDir] = process.argv;
 
-  if (version === undefined || outDir === undefined) throw new Error("Usage: node index.js <version> <outDir>");
+  if (version === undefined || outDir === undefined) throw new Error("Usage: node index.js <version> <outDir> [--preserve-lang]");
 
-  await getLang(outDir, version);
+  console.log(`Downloading lang file for ${version} to ${outDir}...`);
+
+  await getLang(outDir, version, process.argv.includes("--preserve-lang"));
 
   console.log(`Downloaded and parsed language file for version ${version}.`);
 

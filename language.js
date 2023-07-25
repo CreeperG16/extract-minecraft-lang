@@ -36,10 +36,10 @@ async function downloadServerLang(outDir, version) {
 
   // Extract lang file from zip
   if (process.platform === "linux")
-    cp.execSync(`unzip -p ${outDir}/bds.zip resource_packs/vanilla/texts/en_US.lang > ${outDir}/en_US.lang`);
+    cp.execSync(`unzip -p ${outDir}/bds.zip resource_packs/vanilla/texts/en_US.lang > ${outDir}/en_US_${version}.lang`);
   else {
     cp.execSync(`tar -xf ${outDir}/bds.zip -C ${outDir}/ resource_packs/vanilla/texts/en_US.lang `);
-    fs.writeFileSync(`${outDir}/en_US.lang`, fs.readFileSync(`${outDir}/resource_packs/vanilla/texts/en_US.lang`));
+    fs.writeFileSync(`${outDir}/en_US_${version}.lang`, fs.readFileSync(`${outDir}/resource_packs/vanilla/texts/en_US.lang`));
     fs.rmSync(`${outDir}/resource_packs`, { recursive: true });
   }
 
@@ -54,8 +54,8 @@ async function downloadServerLang(outDir, version) {
  * @param {import("fs").PathLike} fileDir The directory the .lang file is located in
  * @returns {{ [key: string]: string }}
  */
-function parseLang(fileDir) {
-  const langText = fs.readFileSync(`${fileDir}/en_US.lang`);
+function parseLang(fileDir, version, preserveLang) {
+  const langText = fs.readFileSync(`${fileDir}/en_US_${version}.lang`);
   const langArr = langText
     .toString()
     .split("\n") // Split lines
@@ -64,7 +64,7 @@ function parseLang(fileDir) {
     .map((x) => x.split("=")); // Split key/value
 
   // Delete file
-  fs.rmSync(`${fileDir}/en_US.lang`);
+  if (!preserveLang) fs.rmSync(`${fileDir}/en_US_${version}.lang`);
 
   return Object.fromEntries(langArr);
 }
@@ -73,13 +73,14 @@ function parseLang(fileDir) {
  * Download a minecraft bedrock BDS zip, extract from it the language file, then parse and save it as a JSON file
  * @param {import("fs").PathLike} outDir Where to save the JSON file
  * @param {string} version The version to download
+ * @param {boolean} preserveLang Whether to keep the .lang file after parsing - defaults to false
  */
-async function getLang(outDir, version) {
+async function getLang(outDir, version, preserveLang = false) {
   console.log("Downloading and extracting lang file...");
   await downloadServerLang(outDir, version);
 
   console.log("Parsing lang file...");
-  const langObj = parseLang(outDir);
+  const langObj = parseLang(outDir, version, preserveLang);
 
   console.log("Writing language JSON file...");
   fs.writeFileSync(`${outDir}/language_${version}.json`, JSON.stringify(langObj, null, 2));

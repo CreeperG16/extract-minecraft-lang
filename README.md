@@ -9,8 +9,9 @@ This is a simple script that extracts and parses Minecraft .lang files for speci
 
 To download, extract and parse a single version's language file, run:
 ```bash
-node index.js <version> <outDir>
+node index.js <version> <outDir> [--preserve-lang]
 ```
+- if you use --preserve-lang, the .lang file will not be deleted, and will be located in `outDir/en_US_{VERSION}.lang`
 
 To download, extract and parse all bedrock versions' (from [minecraft-data](https://github.com/PrismarineJS/minecraft-data/)) language files, you can run:
 ```bash

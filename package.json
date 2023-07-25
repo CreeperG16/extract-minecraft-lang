@@ -3,5 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "author": "CreeperG16 <pappt1216@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "minecraft-data": "^3.40.0"
+  }
 }
